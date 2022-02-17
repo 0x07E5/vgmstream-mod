@@ -185,7 +185,7 @@ static void find_hca_key(hca_codec_data* hca_data, uint64_t* p_keycode, uint16_t
     }
 
 done:
-    VGM_ASSERT(best_score > 1, "HCA: best key=%08x%08x (score=%i)\n",
+    printf(best_score > 1, "HCA: best key=%08x%08x (score=%i)\n",
             (uint32_t)((*p_keycode >> 32) & 0xFFFFFFFF), (uint32_t)(*p_keycode & 0xFFFFFFFF), best_score);
     vgm_asserti(best_score < 0, "HCA: decryption key not found\n");
 }
@@ -219,7 +219,7 @@ static void bruteforce_hca_key_bin_type(STREAMFILE* sf, hca_codec_data* hca_data
     sf_keys = open_streamfile_by_filename(sf, "keys.bin");
     if (!sf_keys) return;
 
-    VGM_LOG("HCA: test keys.bin (type %i)\n", type);
+    printf("HCA: test keys.bin (type %i)\n", type);
     *p_keycode = 0;
 
     keys_size = get_streamfile_size(sf_keys);
@@ -230,7 +230,7 @@ static void bruteforce_hca_key_bin_type(STREAMFILE* sf, hca_codec_data* hca_data
     bytes = read_streamfile(buf, 0, keys_size, sf_keys);
     if (bytes != keys_size) goto done;
 
-    VGM_LOG("HCA: start\n");
+    printf("HCA: start\n");
 
     pos = 0;
     while (pos < keys_size - 4) {
@@ -261,7 +261,7 @@ static void bruteforce_hca_key_bin_type(STREAMFILE* sf, hca_codec_data* hca_data
         }
 
         if (cur_score > 0 && cur_score <= 500) {
-            VGM_LOG("HCA: possible key=%08x%08x (score=%i) at %x\n",
+            printf("HCA: possible key=%08x%08x (score=%i) at %x\n",
                 (uint32_t)((key >> 32) & 0xFFFFFFFF), (uint32_t)(key & 0xFFFFFFFF), cur_score, pos-0x04);
             if (best_score > cur_score)
                 best_score = cur_score;
@@ -275,7 +275,7 @@ done:
     }
     else {
         /* print key as p_keycode includes subkey */
-        VGM_LOG("HCA: best key=%08x%08x (score=%i)\n",
+        printf("HCA: best key=%08x%08x (score=%i)\n",
                 (uint32_t)((key >> 32) & 0xFFFFFFFF), (uint32_t)(key & 0xFFFFFFFF), best_score);
     }
 
@@ -285,7 +285,6 @@ done:
 
 static void bruteforce_hca_key_bin(STREAMFILE* sf, hca_codec_data* hca_data, unsigned long long* p_keycode, uint16_t subkey) {
     bruteforce_hca_key_bin_type(sf, hca_data, p_keycode, subkey, HBF_TYPE_64LE_1);
-/*
     bruteforce_hca_key_bin_type(sf, hca_data, p_keycode, subkey, HBF_TYPE_32LE_1);
     bruteforce_hca_key_bin_type(sf, hca_data, p_keycode, subkey, HBF_TYPE_64BE_1);
     bruteforce_hca_key_bin_type(sf, hca_data, p_keycode, subkey, HBF_TYPE_32BE_1);
@@ -294,7 +293,6 @@ static void bruteforce_hca_key_bin(STREAMFILE* sf, hca_codec_data* hca_data, uns
     bruteforce_hca_key_bin_type(sf, hca_data, p_keycode, subkey, HBF_TYPE_32LE_4);
     bruteforce_hca_key_bin_type(sf, hca_data, p_keycode, subkey, HBF_TYPE_64BE_4);
     bruteforce_hca_key_bin_type(sf, hca_data, p_keycode, subkey, HBF_TYPE_32BE_4);
-*/
 }
 
 
